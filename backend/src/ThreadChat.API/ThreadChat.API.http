@@ -1,0 +1,6 @@
+@ThreadChat.API_HostAddress = http://localhost:5044
+
+GET {{ThreadChat.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
