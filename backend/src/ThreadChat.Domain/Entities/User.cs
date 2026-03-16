@@ -15,9 +15,15 @@ namespace ThreadChat.Domain.Entities
 
         public string? ImageUrl { get; set; }
 
-        public required string PasswordHash { get; set; }
+        public required string FirstName { get; set; }
+        
+        public required string LastName { get; set; }
 
-        public required string FullName { get; set; }
+        public string? Gender { get; set; }
+
+        public DateTimeOffset? DateOfBirth { get; set; }
+
+        public required string PasswordHash { get; set; }
 
         public required SystemRole SystemRole { get; set; }
 
@@ -32,6 +38,12 @@ namespace ThreadChat.Domain.Entities
         public ICollection<Call> CallsHosted { get; set; } = new List<Call>();
 
         public ICollection<CallParticipant> CallParticipations { get; set; } = new List<CallParticipant>();
+        
+        public ICollection<DirectMessageConversation> DirectMessageConversations1 { get; set; } = new List<DirectMessageConversation>();
+        
+        public ICollection<DirectMessageConversation> DirectMessageConversations2 { get; set; } = new List<DirectMessageConversation>();
+        
+        public ICollection<DirectMessage> DirectMessagesSent { get; set; } = new List<DirectMessage>();
     }
 }
 

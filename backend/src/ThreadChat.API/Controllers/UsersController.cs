@@ -25,7 +25,10 @@ public class UsersController : ControllerBase
             u.Username,
             u.PhoneNumber,
             u.Email,
-            u.FullName,
+            u.FirstName,
+            u.LastName,
+            u.Gender,
+            u.DateOfBirth,
             u.SystemRole,
             u.CreatedAt));
 

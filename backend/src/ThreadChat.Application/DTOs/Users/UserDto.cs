@@ -8,7 +8,10 @@ public sealed record UserDto(
     string Username,
     string PhoneNumber,
     string Email,
-    string FullName,
+    string FirstName,
+    string LastName,
+    string? Gender,
+    DateTimeOffset? DateOfBirth,
     SystemRole SystemRole,
     DateTimeOffset CreatedAt);
 
