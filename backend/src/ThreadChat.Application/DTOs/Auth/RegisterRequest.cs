@@ -5,9 +5,8 @@ namespace ThreadChat.Application.DTOs.Auth;
 
 public sealed class RegisterRequest
 {
-    [Required]
     [MaxLength(100)]
-    public string Username { get; init; } = null!;
+    public string? Username { get; init; }
 
     [Required]
     [MaxLength(20)]
@@ -19,8 +18,16 @@ public sealed class RegisterRequest
     public string Email { get; init; } = null!;
 
     [Required]
-    [MaxLength(200)]
-    public string FullName { get; init; } = null!;
+    [MaxLength(100)]
+    public string FirstName { get; init; } = null!;
+
+    [Required]
+    [MaxLength(100)]
+    public string LastName { get; init; } = null!;
+
+    public string? Gender { get; init; }
+
+    public DateTimeOffset? DateOfBirth { get; init; }
 
     [Required]
     [MinLength(6)]

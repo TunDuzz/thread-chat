@@ -18,6 +18,8 @@ public class ThreadChatDbContext : DbContext
     public DbSet<Message> Messages => Set<Message>();
     public DbSet<Call> Calls => Set<Call>();
     public DbSet<CallParticipant> CallParticipants => Set<CallParticipant>();
+    public DbSet<DirectMessageConversation> DirectMessageConversations => Set<DirectMessageConversation>();
+    public DbSet<DirectMessage> DirectMessages => Set<DirectMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -32,7 +34,10 @@ public class ThreadChatDbContext : DbContext
             entity.Property(e => e.PhoneNumber).IsRequired().HasMaxLength(20);
             entity.Property(e => e.Email).IsRequired().HasMaxLength(255);
             entity.Property(e => e.PasswordHash).IsRequired().HasMaxLength(500);
-            entity.Property(e => e.FullName).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.FirstName).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.LastName).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Gender).HasMaxLength(20);
+            entity.Property(e => e.DateOfBirth);
 
             entity.HasMany(e => e.WorkspaceMembers)
                 .WithOne(wm => wm.User)
@@ -138,6 +143,43 @@ public class ThreadChatDbContext : DbContext
             entity.HasKey(e => e.Id);
 
             entity.HasIndex(e => new { e.CallId, e.UserId }).IsUnique();
+        });
+
+        modelBuilder.Entity<DirectMessageConversation>(entity =>
+        {
+            entity.ToTable("direct_message_conversations");
+            entity.HasKey(e => e.Id);
+
+            // Ensure unique conversation per pair
+            entity.HasIndex(e => new { e.User1Id, e.User2Id }).IsUnique();
+
+            entity.HasOne(e => e.User1)
+                .WithMany(u => u.DirectMessageConversations1)
+                .HasForeignKey(e => e.User1Id)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.User2)
+                .WithMany(u => u.DirectMessageConversations2)
+                .HasForeignKey(e => e.User2Id)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasMany(e => e.Messages)
+                .WithOne(m => m.Conversation)
+                .HasForeignKey(m => m.ConversationId);
+        });
+
+        modelBuilder.Entity<DirectMessage>(entity =>
+        {
+            entity.ToTable("direct_messages");
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Content).IsRequired().HasMaxLength(4000);
+            entity.Property(e => e.FileUrl).HasMaxLength(500);
+
+            entity.HasOne(e => e.Sender)
+                .WithMany(u => u.DirectMessagesSent)
+                .HasForeignKey(e => e.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 }

@@ -29,9 +29,14 @@ public sealed class AuthService : IAuthService
 
     public async Task<Result<AuthResponse>> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default)
     {
-        if (await _userRepository.ExistsByUsernameAsync(request.Username, cancellationToken))
+        // Xác định Username từ tiền tố Email nếu không có
+        var username = !string.IsNullOrWhiteSpace(request.Username) 
+            ? request.Username 
+            : request.Email.Split('@')[0];
+
+        if (await _userRepository.ExistsByUsernameAsync(username, cancellationToken))
         {
-            return Result<AuthResponse>.Failure("Username already exists.");
+            return Result<AuthResponse>.Failure("Username already exists (derived from email or provided).");
         }
 
         if (await _userRepository.ExistsByEmailAsync(request.Email, cancellationToken))
@@ -47,10 +52,13 @@ public sealed class AuthService : IAuthService
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = request.Username,
+            Username = username,
             PhoneNumber = request.PhoneNumber,
             Email = request.Email,
-            FullName = request.FullName,
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            Gender = request.Gender,
+            DateOfBirth = request.DateOfBirth,
             PasswordHash = _passwordHasher.Hash(request.Password),
             SystemRole = request.SystemRole,
             CreatedAt = DateTimeOffset.UtcNow
@@ -81,7 +89,7 @@ public sealed class AuthService : IAuthService
         User? user = await _dbContext.Users
             .AsNoTracking()
             .FirstOrDefaultAsync(
-                u => u.Username == usernameOrEmail || u.Email == usernameOrEmail,
+                u => u.Username == usernameOrEmail || u.Email == usernameOrEmail || u.PhoneNumber == usernameOrEmail,
                 cancellationToken);
 
         if (user is null)

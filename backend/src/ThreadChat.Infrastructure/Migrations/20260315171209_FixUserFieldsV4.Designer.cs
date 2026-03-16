@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ThreadChat.Infrastructure.Data;
@@ -11,9 +12,11 @@ using ThreadChat.Infrastructure.Data;
 namespace ThreadChat.Infrastructure.Migrations
 {
     [DbContext(typeof(ThreadChatDbContext))]
-    partial class ThreadChatDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260315171209_FixUserFieldsV4")]
+    partial class FixUserFieldsV4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
